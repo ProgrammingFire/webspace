@@ -1,0 +1,65 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth", "public"]
+}
+
+model Challenge {
+  id          String     @id @unique @default(uuid())
+  name        String     @unique
+  description String
+  imageUrl    String
+  solutions   Solution[]
+
+  @@schema("public")
+}
+
+enum Framework {
+  Angular
+  React
+  Svelte
+  Vue
+
+  @@schema("public")
+}
+
+model Solution {
+  id            String     @id @unique @default(uuid())
+  solvedBy      String
+  framework     Framework
+  sourceCodeUrl String     @unique
+  liveAppUrl    String     @unique
+  challengeId   String?
+  challenge     Challenge? @relation(fields: [challengeId], references: [id])
+  user          User       @relation(fields: [solvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model User {
+  id         String     @id @unique @default(uuid())
+  email      String     @unique
+  username   String     @unique
+  name       String
+  team       Team
+  profilePic String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now()) @updatedAt
+  solutions  Solution[]
+
+  @@schema("auth")
+}
+
+enum Team {
+  Earth
+  Mars
+  Jupiter
+  Saturn
+
+  @@schema("auth")
+}

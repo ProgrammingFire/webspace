@@ -1,10 +1,10 @@
-import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Barlow } from "next/font/google";
 import Header from "@/components/Header";
+import TrpcProvider from "@/providers/trpc-provider";
 
-const font = Poppins({
+const font = Barlow({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
 });
@@ -14,17 +14,17 @@ export const metadata: Metadata = {
   description: "Enter the space!",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={font.className}>
-        <Header />
-        <main className="mt-14">{children}</main>
+        <TrpcProvider>
+          <Header />
+          <main className="mt-14">{children}</main>
+        </TrpcProvider>
       </body>
     </html>
   );
 }
+
+export default RootLayout;
