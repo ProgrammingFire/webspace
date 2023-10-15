@@ -32,10 +32,6 @@ import {
 async function Header() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  let dbUser: User | null = null;
-  if (user && user.id) {
-    dbUser = await db.user.findFirst({ where: { id: user.id } });
-  }
 
   return (
     <header className="fixed top-0 z-10 w-full  h-14 flex justify-between items-center py-2 px-8 border-b border-border bg-background/90 backdrop-blur">
@@ -77,10 +73,7 @@ async function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem>
-                    <Link
-                      className="flex items-center"
-                      href={`/${dbUser?.username}`}
-                    >
+                    <Link className="flex items-center" href="/profile">
                       <UserIcon className="w-4 h-4 mr-2" /> My Profile
                     </Link>
                   </DropdownMenuItem>
@@ -94,7 +87,7 @@ async function Header() {
               </DropdownMenu>
             ) : (
               <Link
-                href={`/${dbUser?.username}`}
+                href="/profile"
                 className={cn(
                   buttonVariants({ variant: "outline" }),
                   "px-5 space-x-3 text-indigo-300"
