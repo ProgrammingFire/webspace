@@ -8,7 +8,7 @@ export default async function EditProfilePage() {
   const { getUser } = getKindeServerSession();
   const user = getUser();
 
-  if (!user || !user.id) redirect("/?err-message=sign-in");
+  if (!user || !user.id) redirect("/?errMessage=sign-in");
 
   const dbUser = await db.user.findFirst({ where: { id: user.id } });
   if (!dbUser) redirect("/auth-callback?origin=edit-profile");

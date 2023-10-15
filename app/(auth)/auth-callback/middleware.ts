@@ -8,7 +8,7 @@ export async function middleware(_request: NextRequest) {
   const user = getUser();
 
   if (!user || !user.id) {
-    return NextResponse.redirect(new URL("/?err-message=sign-in"));
+    return NextResponse.redirect(new URL("/?errMessage=sign-in"));
   }
 
   const dbUser = await db.user.findFirst({ where: { id: user.id } });

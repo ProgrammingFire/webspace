@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   const searchParams = useSearchParams();
-  const errMessage = searchParams.get("err-message");
+  const errMessage = searchParams.get("errMessage");
 
   if (errMessage === "sign-in") {
     toast({
