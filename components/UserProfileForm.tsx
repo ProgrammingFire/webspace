@@ -216,6 +216,7 @@ export default function UserProfileForm({
           <div className="grid grid-cols-4 gap-2 mt-4">
             {techStack.map((tech, i) => (
               <div
+                key={i}
                 onClick={() => {
                   setTechStack((stack) => {
                     return stack.filter((val) => val !== tech);

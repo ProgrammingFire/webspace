@@ -160,8 +160,11 @@ export default async function ProfilePage({
             Tech Stack
           </h1>
           <div className="grid grid-cols-3 gap-2 mt-4">
-            {dbUser.techStack.map((tech) => (
-              <div className="bg-secondary-bg py-2 px-3 rounded-md text-center">
+            {dbUser.techStack.map((tech, i) => (
+              <div
+                key={i}
+                className="bg-secondary-bg py-2 px-3 rounded-md text-center"
+              >
                 {tech}
               </div>
             ))}

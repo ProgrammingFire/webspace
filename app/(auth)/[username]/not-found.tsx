@@ -13,7 +13,7 @@ function NotFoundUser() {
           User not found
         </h1>
         <p className="mt-6 text-base leading-7 text-slate-300">
-          Sorry, we couldn't find the user you're looking for.
+          Sorry, we couldn&apos;t find the user you&apos;re looking for.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link
