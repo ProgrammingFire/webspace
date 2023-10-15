@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import React, { useState } from "react";
 import { getBaseUrl, trpc } from "@/app/_trpc/client";
-import { FormProvider, useForm } from "react-hook-form";
 
 export default function TrpcProvider({
   children,
@@ -22,9 +21,7 @@ export default function TrpcProvider({
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <FormProvider {...useForm()}>{children}</FormProvider>
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </trpc.Provider>
   );
 }

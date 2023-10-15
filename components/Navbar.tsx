@@ -24,7 +24,7 @@ interface NavItemProps {
 
 function NavItem({ active = false, link, text }: NavItemProps) {
   return (
-    <Link href={link} className={cn(active && "text-purple-300 font-bold")}>
+    <Link href={link} className={cn(active && "text-indigo-300 font-bold")}>
       {text}
     </Link>
   );

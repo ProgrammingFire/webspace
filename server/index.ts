@@ -3,15 +3,12 @@ import { publicProcedure, router } from "./trpc";
 import { db } from "@/lib/database";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { teamEnum, userProfileSchema } from "@/lib/types";
 
 export const appRouter = router({
   authCallback: publicProcedure
     .input(
-      z.object({
-        name: z.string(),
-        username: z.string(),
-        team: z.enum(["Earth", "Saturn", "Jupiter", "Mars"]),
-      })
+      userProfileSchema.merge(z.object({ techStack: z.array(z.string()) }))
     )
     .mutation(async ({ input }) => {
       if (input.name === "" || input.username === "")
@@ -46,9 +43,8 @@ export const appRouter = router({
           data: {
             id: user.id,
             email: user.email,
-            username: input.username,
-            name: input.name,
-            team: input.team,
+            profilePic: user.picture,
+            ...input,
           },
         });
       }

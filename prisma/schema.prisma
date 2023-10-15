@@ -48,6 +48,15 @@ model User {
   name       String
   team       Team
   profilePic String?
+  bio        String?    @default("Hey there, I have entered the space!")
+  techStack  String[]   @default([])
+  location   String?
+  twitter    String?
+  github     String?
+  website    String?
+  youtube    String?
+  followers  String[]   @default([])
+  following  String[]   @default([])
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @default(now()) @updatedAt
   solutions  Solution[]
