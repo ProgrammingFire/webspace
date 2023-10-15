@@ -25,9 +25,11 @@ import {
 import { FormEvent, KeyboardEvent, useState } from "react";
 import { Label } from "./ui/label";
 import { trpc } from "@/app/_trpc/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { userProfileSchema as formSchema } from "@/lib/types";
 import { Loader2, UserCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { User } from "@prisma/client";
 
 interface UserProfileFormProps {
   defaultValues: {
@@ -39,13 +41,34 @@ interface UserProfileFormProps {
     github: string;
     youtube: string;
     website: string;
+    location: string;
   };
+  defaultTechStack?: string[];
+  updateForm?: boolean;
+  className?: string;
+  currentUser?: User;
 }
 
 export default function UserProfileForm({
-  defaultValues,
+  defaultValues = {
+    username: "",
+    name: "",
+    bio: "Hey there I am an astronaut and I have just entered the space!",
+    team: "Earth",
+    website: "https://",
+    github: "https://github.com/",
+    twitter: "https://twitter.com/",
+    youtube: "https://youtube.com/c/",
+    location: "",
+  },
+  updateForm = false,
+  defaultTechStack = [],
+  className = "",
+  currentUser,
 }: UserProfileFormProps) {
-  const [techStack, setTechStack] = useState<string[]>([]);
+  const [techStack, setTechStack] = useState<string[]>(
+    defaultTechStack ? defaultTechStack : []
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
   const origin = searchParams.get("origin");
@@ -69,9 +92,30 @@ export default function UserProfileForm({
     retry: true,
     retryDelay: 500,
   });
+  const { mutate: update, isLoading: isLoadingUpdate } =
+    trpc.updateProfile.useMutation({
+      onSuccess: ({ success, message, code, user: updatedUser }) => {
+        if (success && updatedUser) {
+          router.push(`/${updatedUser.username}`);
+        }
+        if (!success) {
+          if (code === "CONFLICT")
+            form.setError("username", { message: message });
+        }
+      },
+      onError: (err) => {
+        if (err.data?.code === "UNAUTHORIZED") router.push("/");
+      },
+      retry: true,
+      retryDelay: 500,
+    });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setup({ ...values, techStack });
+    if (updateForm) {
+      update({ ...values, techStack });
+    } else {
+      setup({ ...values, techStack });
+    }
   }
 
   function addTechToStack(event: any): void {
@@ -86,61 +130,61 @@ export default function UserProfileForm({
   };
 
   return (
-    <div className="max-w-xl mx-auto my-24">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          onKeyDown={(e) => checkKeyDown(e)}
-          className="space-y-8"
-        >
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="webspace" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Nouman Rahman" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>About you</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="I am a senior developer on a random big tech company..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        onKeyDown={(e) => checkKeyDown(e)}
+        className={cn("space-y-8", className)}
+      >
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="webspace" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full name</FormLabel>
+              <FormControl>
+                <Input placeholder="Nouman Rahman" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="bio"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>About you</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="I am a senior developer on a random big tech company..."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {!updateForm && (
           <FormField
             control={form.control}
             name="team"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>About you</FormLabel>
+                <FormLabel>Team</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
@@ -158,112 +202,118 @@ export default function UserProfileForm({
               </FormItem>
             )}
           />
-          <div className="flex flex-col space-y-2">
-            <Label htmlFor="techStack" className="flex space-x-2">
-              <span>Tech Stack</span>
-            </Label>
-            <Input
-              id="techStack"
-              placeholder="TypeScript, React, Next.js, Svelte, etc..."
-              onKeyDown={(event) => addTechToStack(event)}
-            />
-            <div className="grid grid-cols-4 gap-2 mt-4">
-              {techStack.map((tech, i) => (
-                <div
-                  onClick={() => {
-                    setTechStack((stack) => {
-                      return stack.filter((val) => val !== tech);
-                    });
-                  }}
-                  className="cursor-pointer bg-secondary-bg py-2 px-5 rounded-md shadow-md text-center"
-                >
-                  {tech}
-                </div>
-              ))}
-            </div>
+        )}
+
+        <div className="flex flex-col space-y-2">
+          <Label htmlFor="techStack" className="flex space-x-2">
+            <span>Tech Stack</span>
+          </Label>
+          <Input
+            id="techStack"
+            placeholder="TypeScript, React, Next.js, Svelte, etc..."
+            onKeyDown={(event) => addTechToStack(event)}
+          />
+          <div className="grid grid-cols-4 gap-2 mt-4">
+            {techStack.map((tech, i) => (
+              <div
+                onClick={() => {
+                  setTechStack((stack) => {
+                    return stack.filter((val) => val !== tech);
+                  });
+                }}
+                className="cursor-pointer bg-secondary-bg py-2 px-5 rounded-md shadow-md text-center"
+              >
+                {tech}
+              </div>
+            ))}
           </div>
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Your Location</FormLabel>
-                <FormControl>
-                  <Input placeholder="India" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="twitter"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Twitter URL</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://twitter.com/webspace"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="github"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Github URL</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://github.com/webspace" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="youtube"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>YouTube URL</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://youtube.com/c/webspace"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="website"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Your Personal Website</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://webspace.io" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            disabled={isLoading}
-            type="submit"
-            className="w-full"
-            variant="outline"
-          >
-            {isLoading && <Loader2 className="w-4 h-4 mr-3 animate-spin" />}{" "}
-            Setup your account on the space!
-          </Button>
-        </form>
-      </Form>
-    </div>
+        </div>
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Your Location</FormLabel>
+              <FormControl>
+                <Input placeholder="India" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="twitter"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Twitter URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://twitter.com/webspace" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="github"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Github URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://github.com/webspace" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="youtube"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>YouTube URL</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://youtube.com/c/webspace"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="website"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Your Personal Website</FormLabel>
+              <FormControl>
+                <Input placeholder="https://webspace.io" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          disabled={updateForm ? isLoadingUpdate : isLoading}
+          type="submit"
+          className="w-full"
+          variant="outline"
+        >
+          {updateForm
+            ? isLoadingUpdate && (
+                <Loader2 className="w-4 h-4 mr-3 animate-spin" />
+              )
+            : isLoading && <Loader2 className="w-4 h-4 mr-3 animate-spin" />}
+          {updateForm ? (
+            <>Update your account on the space!</>
+          ) : (
+            <>Setup your account on the space!</>
+          )}
+        </Button>
+      </form>
+    </Form>
   );
 }

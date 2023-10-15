@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Loader2,
@@ -19,6 +19,14 @@ import { notFound } from "next/navigation";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import UserProfileForm from "@/components/UserProfileForm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ProfilePageProps {
   params: {
@@ -88,9 +96,12 @@ export default async function ProfilePage({
         </div>
         <div className="flex">
           {user.id === dbUser.id ? (
-            <Button variant="outline">
+            <Link
+              href="/edit-profile"
+              className={buttonVariants({ variant: "outline" })}
+            >
               <Edit className="w-4 h-4 mr-2" /> Edit Profile
-            </Button>
+            </Link>
           ) : user && user.id ? (
             <Button variant="outline">
               <Plus className="w-4 h-4 mr-2" /> Follow
@@ -125,10 +136,11 @@ export default async function ProfilePage({
             </Link>
           )}
         </div>
-        <div className="flex text-lg font-semibold items-center">
-          <Locate className="mr-2 w-5 h-5" />{" "}
-          {dbUser.location && <span>{dbUser.location}</span>}
-        </div>
+        {dbUser.location && (
+          <div className="flex font-semibold items-center">
+            <Locate className="mr-2 w-5 h-5" /> <span>{dbUser.location}</span>
+          </div>
+        )}
         <div className="flex space-x-2">
           <Calendar className="w-5 h-5" /> <span>Member since</span>{" "}
           <span className="font-bold">{`${createdAtDateSplit[0]} ${createdAtDateSplit[1]} ${createdAtDateSplit[2]} ${createdAtDateSplit[3]}`}</span>

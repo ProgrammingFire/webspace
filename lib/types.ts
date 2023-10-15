@@ -9,7 +9,7 @@ export const userProfileSchema = z.object({
     .max(50)
     .refine((s) => !s.includes(" "), "The username must not contain spaces!"),
   name: z.string().min(5).max(50),
-  bio: z.string().min(20).max(100),
+  bio: z.string().min(20).max(500),
   team: teamEnum,
   location: z.string().min(3).max(20).optional(),
   twitter: z
