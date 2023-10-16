@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import UserProfileForm from "@/components/UserProfileForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import FollowButton from "@/components/FollowButton";
 
 interface ProfilePageProps {
   params: {
@@ -88,7 +89,9 @@ export default async function ProfilePage({
               @{dbUser.username}
             </h3>
             <h2 className="font-medium text-base flex space-x-3">
-              <span>{dbUser.followers.length} followers</span>{" "}
+              <span>
+                {dbUser.followers.length} followers ({dbUser.followers})
+              </span>{" "}
               <span>{dbUser.following.length} following</span>{" "}
               <span>{solutions.length} challenges solved</span>
             </h2>
@@ -103,9 +106,7 @@ export default async function ProfilePage({
               <Edit className="w-4 h-4 mr-2" /> Edit Profile
             </Link>
           ) : user && user.id ? (
-            <Button variant="outline">
-              <Plus className="w-4 h-4 mr-2" /> Follow
-            </Button>
+            <FollowButton currentUserId={user.id} dbUser={dbUser} />
           ) : (
             <Button variant="outline">
               <Plus className="w-4 h-4 mr-2" /> Login to follow

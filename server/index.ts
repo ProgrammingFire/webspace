@@ -1,5 +1,5 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { publicProcedure, router } from "./trpc";
+import { privateProcedure, publicProcedure, router } from "./trpc";
 import { db } from "@/lib/database";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -51,11 +51,11 @@ export const appRouter = router({
 
       return { success: true, code: "", message: "" };
     }),
-  updateProfile: publicProcedure
+  updateProfile: privateProcedure
     .input(
       userProfileSchema.merge(z.object({ techStack: z.array(z.string()) }))
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx: { userId } }) => {
       if (input.name === "" || input.username === "")
         return {
           success: false,
@@ -64,14 +64,8 @@ export const appRouter = router({
           user: null,
         };
 
-      const { getUser } = getKindeServerSession();
-      const user = getUser();
-
-      if (!user.email || !user.id)
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-
       const dbUser = await db.user.findFirst({
-        where: { id: user.id },
+        where: { id: userId },
       });
 
       if (dbUser) {
@@ -90,7 +84,7 @@ export const appRouter = router({
 
         const updatedUser = await db.user.update({
           where: {
-            id: user.id,
+            id: userId,
           },
           data: {
             ...input,
@@ -101,6 +95,32 @@ export const appRouter = router({
       }
 
       return { success: false, code: "", message: "", user: null };
+    }),
+  followUser: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx: { userId: currentUserId }, input: { userId } }) => {
+      const dbUser = await db.user.findFirst({ where: { id: userId } });
+      if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      await db.user.update({
+        where: { id: userId },
+        data: {
+          followers: [...dbUser.followers, currentUserId],
+        },
+      });
+    }),
+  unfollowUser: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx: { userId: currentUserId }, input: { userId } }) => {
+      const dbUser = await db.user.findFirst({ where: { id: userId } });
+      if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      await db.user.update({
+        where: { id: userId },
+        data: {
+          followers: dbUser.followers.filter((val) => val !== currentUserId),
+        },
+      });
     }),
 });
 

@@ -60,41 +60,40 @@ async function Header() {
         <Timer endDate={endDate} />
         {user ? (
           <div className="flex items-center space-x-2 h-full">
-            {user.picture ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-indigo-300 rounded-xl">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-indigo-300 rounded-xl">
+                {user.picture ? (
                   <Avatar className="rounded-xl h-9 w-9">
                     <AvatarImage src={user.picture} alt={`@${user.id}`} />
                     <AvatarFallback>
                       <Loader2 className="animate-spin text-indigo-300" />
                     </AvatarFallback>
                   </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Link className="flex items-center" href="/profile">
-                      <UserIcon className="w-4 h-4 mr-2" /> My Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogoutLink className="text-red-300 flex items-center">
-                      <LogOutIcon className="w-4 h-4 mr-2" /> Logout
-                    </LogoutLink>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link
-                href="/profile"
-                className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "px-5 space-x-3 text-indigo-300"
+                ) : (
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="text-purple-300"
+                  >
+                    <UserCircle />
+                  </Button>
                 )}
-              >
-                <UserCircle className="" /> <span>Profile</span>
-              </Link>
-            )}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Link className="flex items-center" href="/profile">
+                    <UserIcon className="w-4 h-4 mr-2" /> My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <LogoutLink className="text-red-300 flex items-center">
+                    <LogOutIcon className="w-4 h-4 mr-2" /> Logout
+                  </LogoutLink>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {/* <LogoutLink
               className={
                 buttonVariants({
