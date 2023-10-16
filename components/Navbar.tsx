@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const pathname = usePathname();
   return (
-    <nav className="flex text-sm space-x-4 bg-secondary-bg h-full items-center justify-center px-8 rounded-xl shadow-lg">
+    <nav className="flex text-sm space-x-4 bg-secondary-bg h-full items-center justify-center px-8 rounded-xl shadow-lg border border-border">
       <NavItem text="Home" link="/" active={pathname == "/"} />
       <NavItem text="Blog" link="/blog" active={pathname == "/blog"} />
       <NavItem text="Contact" link="/contact" active={pathname == "/contact"} />
