@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@kinde-oss/kinde-auth-nextjs": "^1.8.22",
     "@prisma/client": "5.4.2",
+    "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
@@ -35,6 +36,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.47.0",
+    "react-simple-image-slider": "^2.4.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"

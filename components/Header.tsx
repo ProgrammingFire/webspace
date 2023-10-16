@@ -28,10 +28,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import Timer from "./Timer";
 
 async function Header() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+
+  const challenge = await db.challenge.findFirst({
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (!challenge) return;
+
+  const date = new Date(challenge.createdAt);
+  const endDate = new Date(date);
+  endDate.setDate(date.getDate() + 1);
 
   return (
     <header className="fixed top-0 z-10 w-full  h-14 flex justify-between items-center py-2 px-8 border-b border-border bg-background/90 backdrop-blur">
@@ -46,19 +57,7 @@ async function Header() {
       </div>
 
       <div className="flex space-x-3 h-full items-center">
-        <Link
-          href="/solve"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-indigo-300 bg-secondary-bg flex h-full items-center justify-center text-base font-bold px-8 rounded-xl shadow-lg space-x-3"
-          )}
-        >
-          <span className="bg-gradient-to-t primary-foreground">12</span>
-          <span>:</span>
-          <span className="bg-gradient-to-b primary-foreground">56</span>
-          <span>:</span>
-          <span className="bg-gradient-to-t primary-foreground">24</span>
-        </Link>
+        <Timer endDate={endDate} />
         {user ? (
           <div className="flex items-center space-x-2 h-full">
             {user.picture ? (
@@ -99,7 +98,7 @@ async function Header() {
             {/* <LogoutLink
               className={
                 buttonVariants({
-                  variant: "outline",
+                  constiant: "outline",
                   size: "fit",
                 }) + " text-red-300"
               }
