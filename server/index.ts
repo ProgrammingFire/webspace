@@ -101,11 +101,22 @@ export const appRouter = router({
     .mutation(async ({ ctx: { userId: currentUserId }, input: { userId } }) => {
       const dbUser = await db.user.findFirst({ where: { id: userId } });
       if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const currentUser = await db.user.findFirst({
+        where: { id: currentUserId },
+      });
+      if (!currentUser) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await db.user.update({
         where: { id: userId },
         data: {
           followers: [...dbUser.followers, currentUserId],
+        },
+      });
+
+      await db.user.update({
+        where: { id: currentUserId },
+        data: {
+          following: [...currentUser.following, dbUser.id],
         },
       });
     }),
@@ -114,11 +125,21 @@ export const appRouter = router({
     .mutation(async ({ ctx: { userId: currentUserId }, input: { userId } }) => {
       const dbUser = await db.user.findFirst({ where: { id: userId } });
       if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const currentUser = await db.user.findFirst({
+        where: { id: currentUserId },
+      });
+      if (!currentUser) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await db.user.update({
         where: { id: userId },
         data: {
           followers: dbUser.followers.filter((val) => val !== currentUserId),
+        },
+      });
+      await db.user.update({
+        where: { id: currentUserId },
+        data: {
+          following: currentUser.following.filter((val) => val !== dbUser.id),
         },
       });
     }),
