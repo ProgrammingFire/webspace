@@ -65,8 +65,8 @@ async function Header() {
                 {user.picture ? (
                   <Avatar className="rounded-xl h-9 w-9">
                     <AvatarImage src={user.picture} alt={`@${user.id}`} />
-                    <AvatarFallback>
-                      <Loader2 className="animate-spin text-indigo-300" />
+                    <AvatarFallback className="rounded-xl bg-secondary-bg border border-border">
+                      <UserIcon className="text-indigo-300" />
                     </AvatarFallback>
                   </Avatar>
                 ) : (
