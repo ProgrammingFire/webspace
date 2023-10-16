@@ -89,9 +89,7 @@ export default async function ProfilePage({
               @{dbUser.username}
             </h3>
             <h2 className="font-medium text-base flex space-x-3">
-              <span>
-                {dbUser.followers.length} followers ({dbUser.followers})
-              </span>{" "}
+              <span>{dbUser.followers.length} followers</span>{" "}
               <span>{dbUser.following.length} following</span>{" "}
               <span>{solutions.length} challenges solved</span>
             </h2>
