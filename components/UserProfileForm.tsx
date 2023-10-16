@@ -96,6 +96,7 @@ export default function UserProfileForm({
     trpc.updateProfile.useMutation({
       onSuccess: ({ success, message, code, user: updatedUser }) => {
         if (success && updatedUser) {
+          router.prefetch(`/${updatedUser.username}`);
           router.push(`/${updatedUser.username}`);
         }
         if (!success) {
