@@ -11,7 +11,7 @@ export default function Home() {
     toast({
       title: "Not Signed In",
       description:
-        "You are not authorized to view your profile because you are not signed in",
+        "You are not authorized to view/do this action because you are not signed in",
       variant: "destructive",
     });
   }
