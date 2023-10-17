@@ -9,7 +9,7 @@ import React from "react";
 async function Page() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  if (!user || !user.id || !user.email) redirect("/");
+  if (!user || !user.id || !user.email) redirect("/?errMessage=sign-in");
 
   const dbUser = await db.user.findFirst({
     where: { id: user.id, email: user.email },
