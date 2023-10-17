@@ -12,6 +12,7 @@ import {
   LocateFixed,
   Locate,
   Calendar,
+  UserIcon,
 } from "lucide-react";
 import React from "react";
 import { db } from "@/lib/database";
@@ -60,13 +61,13 @@ export default async function ProfilePage({
       <div className="flex items-start justify-between">
         <div className="flex items-center">
           {dbUser.profilePic && (
-            <Avatar className="rounded-xl w-20 h-20 border-4 border-indigo-300">
+            <Avatar className="rounded-xl w-20 h-20 border-4 border-indigo-500">
               <AvatarImage
                 src={dbUser.profilePic}
                 alt={`@${dbUser.username}`}
               />
-              <AvatarFallback>
-                <Loader2 className="animate-spin text-indigo-300" />
+              <AvatarFallback className="rounded-xl bg-secondary-bg">
+                <UserIcon className="text-indigo-500 w-8 h-8" />
               </AvatarFallback>
             </Avatar>
           )}

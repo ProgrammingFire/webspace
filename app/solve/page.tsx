@@ -1,10 +1,23 @@
+import { getEndDate, isEnded } from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { db } from "@/lib/database";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import SubmitSolutionForm from "@/components/SubmitSolutionForm";
+import Link from "next/link";
 
 async function Page() {
   const { getUser } = getKindeServerSession();
@@ -18,17 +31,27 @@ async function Page() {
   if (!dbUser) redirect("/auth-callback?origin=solve");
 
   const challenge = await db.challenge.findFirst({
+    where: { current: true },
     orderBy: { createdAt: "desc" },
   });
 
   if (!challenge) return;
+
+  const userSolution = await db.solution.findFirst({
+    where: { solvedBy: dbUser.id },
+  });
+
+  const userSolved = !!userSolution;
+
+  const endDate = getEndDate(challenge.updatedAt);
+  const [_, ended] = isEnded(endDate);
 
   return (
     <div className="flex flex-col space-y-3 items-center py-12 mx-auto">
       <div className="w-2/4">
         <AspectRatio ratio={16 / 9}>
           <Image
-            src="https://i.pinimg.com/originals/47/af/9f/47af9f213d7b28827810bb0e91b53cf6.png"
+            src={challenge.images[0]}
             fill
             alt={challenge.name}
             className="rounded-md object-cover border-4 border-indigo-600"
@@ -37,7 +60,31 @@ async function Page() {
       </div>
       <h1 className="text-2xl font-semibold">{challenge.name}</h1>
       <p className="text-slate-300 text-lg">{challenge.description}</p>
-      <Button variant="secondary">Submit solution</Button>
+      {userSolved ? (
+        <Link
+          href={`/solutions/${challenge.id}`}
+          className={buttonVariants({ variant: "default" })}
+        >
+          Look at the solutions
+        </Link>
+      ) : (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button disabled={ended} variant="outline" className="font-medium">
+              Submit solution
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Submit Solution</DialogTitle>
+              <DialogDescription>
+                Submit an amazing solution for the challenge "{challenge.name}".
+              </DialogDescription>
+            </DialogHeader>
+            <SubmitSolutionForm challengeId={challenge.id} />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

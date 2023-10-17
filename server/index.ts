@@ -3,7 +3,11 @@ import { privateProcedure, publicProcedure, router } from "./trpc";
 import { db } from "@/lib/database";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { teamEnum, userProfileSchema } from "@/lib/types";
+import {
+  submitSolutionFormSchema,
+  teamEnum,
+  userProfileSchema,
+} from "@/lib/schemas";
 
 export const appRouter = router({
   authCallback: publicProcedure
@@ -140,6 +144,31 @@ export const appRouter = router({
         where: { id: currentUserId },
         data: {
           following: currentUser.following.filter((val) => val !== dbUser.id),
+        },
+      });
+    }),
+  submitSolution: privateProcedure
+    .input(
+      submitSolutionFormSchema.merge(z.object({ challengeId: z.string() }))
+    )
+    .mutation(async ({ ctx: { userId }, input }) => {
+      const challenge = await db.challenge.findFirst({
+        where: { id: input.challengeId },
+      });
+
+      if (!challenge)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "The Challenge requested is not found!",
+        });
+
+      await db.solution.create({
+        data: {
+          liveAppUrl: input.liveAppUrl,
+          sourceCodeUrl: input.sourceCodeUrl,
+          framework: input.framework,
+          solvedBy: userId,
+          challengeId: input.challengeId,
         },
       });
     }),

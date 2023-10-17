@@ -17,7 +17,7 @@ function Loading({ title, description, fullScreen = false }: LoadingProps) {
       )}
     >
       <div className="flex flex-col items-center justify-center gap-2">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-300" />
+        <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
         <h1 className="font-semibold text-xl mt-4">{title}</h1>
         <p>{description}</p>
       </div>

@@ -15,6 +15,7 @@ model Challenge {
   description String
   images      String[]   @default([])
   solutions   Solution[]
+  current     Boolean    @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

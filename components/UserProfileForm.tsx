@@ -26,7 +26,7 @@ import { FormEvent, KeyboardEvent, useState } from "react";
 import { Label } from "./ui/label";
 import { trpc } from "@/app/_trpc/client";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { userProfileSchema as formSchema } from "@/lib/types";
+import { userProfileSchema as formSchema } from "@/lib/schemas";
 import { Loader2, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";

@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, getEndDate } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button, buttonVariants } from "./ui/button";
 import {
@@ -19,7 +19,7 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs/server";
 import Navbar from "./Navbar";
 import { db } from "@/lib/database";
-import { User } from "@prisma/client";
+import { Challenge, User } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,15 +34,19 @@ async function Header() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
+  let dbUser: User | null = null;
+
+  if (user && user.id)
+    dbUser = await db.user.findFirst({ where: { id: user.id } });
+
   const challenge = await db.challenge.findFirst({
+    where: { current: true },
     orderBy: { createdAt: "desc" },
   });
 
   if (!challenge) return;
 
-  const date = new Date(challenge.createdAt);
-  const endDate = new Date(date);
-  endDate.setDate(date.getDate() + 1);
+  const endDate = getEndDate(challenge.updatedAt);
 
   return (
     <header className="fixed top-0 z-10 w-full  h-14 flex justify-between items-center py-2 px-8 border-b border-border bg-background/90 backdrop-blur">
@@ -59,52 +63,48 @@ async function Header() {
       <div className="flex space-x-3 h-full items-center">
         <Timer endDate={endDate} />
         {user ? (
-          <div className="flex items-center space-x-2 h-full">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-indigo-300 rounded-xl">
-                {user.picture ? (
-                  <Avatar className="rounded-xl h-9 w-9">
-                    <AvatarImage src={user.picture} alt={`@${user.id}`} />
-                    <AvatarFallback className="rounded-xl bg-secondary-bg border border-border">
-                      <UserIcon className="text-indigo-300" />
-                    </AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="text-purple-300"
-                  >
-                    <UserCircle />
-                  </Button>
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Link className="flex items-center" href="/profile">
-                    <UserIcon className="w-4 h-4 mr-2" /> My Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogoutLink className="text-red-300 flex items-center">
-                    <LogOutIcon className="w-4 h-4 mr-2" /> Logout
-                  </LogoutLink>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* <LogoutLink
-              className={
-                buttonVariants({
-                  constiant: "outline",
-                  size: "fit",
-                }) + " text-red-300"
-              }
-            >
-              <LogOutIcon className="w-4 h-4" />
-            </LogoutLink> */}
-          </div>
+          !dbUser ? (
+            <Button variant="default">Setup your account</Button>
+          ) : (
+            <div className="flex items-center space-x-2 h-full">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-indigo-500 rounded-xl">
+                  {dbUser.profilePic ? (
+                    <Avatar className="rounded-xl h-9 w-9">
+                      <AvatarImage
+                        src={dbUser.profilePic}
+                        alt={`@${user.id}`}
+                      />
+                      <AvatarFallback className="rounded-xl bg-secondary-bg border border-border">
+                        <UserIcon className="text-indigo-300" />
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <Button
+                      // size="icon"
+                      variant="outline"
+                      className="text-purple-300 h-full"
+                    >
+                      <UserCircle />
+                    </Button>
+                  )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>
+                    <Link className="flex items-center" href="/profile">
+                      <UserIcon className="w-4 h-4 mr-2" /> My Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <LogoutLink className="text-red-300 flex items-center">
+                      <LogOutIcon className="w-4 h-4 mr-2" /> Logout
+                    </LogoutLink>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )
         ) : (
           <div className="h-full">
             <LoginLink
