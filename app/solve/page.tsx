@@ -2,7 +2,6 @@ import { getEndDate, isEnded } from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { db } from "@/lib/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -18,14 +17,15 @@ import {
 } from "@/components/ui/dialog";
 import SubmitSolutionForm from "@/components/SubmitSolutionForm";
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs";
 
 async function Page() {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  if (!user || !user.id || !user.email) redirect("/?errMessage=sign-in");
+  const user = await currentUser();
+  if (!user || !user.id || !user.emailAddresses)
+    redirect("/?errMessage=sign-in");
 
   const dbUser = await db.user.findFirst({
-    where: { id: user.id, email: user.email },
+    where: { id: user.id },
   });
 
   if (!dbUser) redirect("/auth-callback?origin=solve");
@@ -59,7 +59,9 @@ async function Page() {
         </AspectRatio>
       </div>
       <h1 className="text-2xl font-semibold">{challenge.name}</h1>
-      <p className="text-slate-300 text-lg">{challenge.description}</p>
+      <p className="text-slate-300 text-lg max-w-lg text-center">
+        {challenge.description}
+      </p>
       {userSolved ? (
         <Link
           href={`/solutions/${challenge.id}`}

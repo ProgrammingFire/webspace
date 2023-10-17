@@ -6,17 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button, buttonVariants } from "./ui/button";
 import {
   ArrowRightCircleIcon,
+  EditIcon,
   Loader2,
   LogOutIcon,
   UserCircle,
   UserIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import {
-  LoginLink,
-  LogoutLink,
-  getKindeServerSession,
-} from "@kinde-oss/kinde-auth-nextjs/server";
 import Navbar from "./Navbar";
 import { db } from "@/lib/database";
 import { Challenge, User } from "@prisma/client";
@@ -29,10 +25,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import Timer from "./Timer";
+import { auth, currentUser } from "@clerk/nextjs";
+import LogoutButton from "./LogoutButton";
 
 async function Header() {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const user = await currentUser();
 
   let dbUser: User | null = null;
 
@@ -90,16 +87,20 @@ async function Header() {
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Link className="flex items-center" href="/profile">
+                  <DropdownMenuLabel>@{dbUser.username}</DropdownMenuLabel>
+                  <Link href="/profile">
+                    <DropdownMenuItem className="flex items-center cursor-pointer px-4">
                       <UserIcon className="w-4 h-4 mr-2" /> My Profile
-                    </Link>
-                  </DropdownMenuItem>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/edit-profile">
+                    <DropdownMenuItem className="flex items-center cursor-pointer px-4">
+                      <EditIcon className="w-4 h-4 mr-2" /> Edit Profile
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogoutLink className="text-red-300 flex items-center">
-                      <LogOutIcon className="w-4 h-4 mr-2" /> Logout
-                    </LogoutLink>
+                  <DropdownMenuItem className="px-4">
+                    <LogoutButton />
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -107,7 +108,8 @@ async function Header() {
           )
         ) : (
           <div className="h-full">
-            <LoginLink
+            <Link
+              href="/sign-in"
               className={cn(
                 "text-sm flex items-center space-x-2",
                 buttonVariants({ variant: "default", size: "fit" })
@@ -115,7 +117,7 @@ async function Header() {
             >
               <span>Become an Astronaut</span>{" "}
               <ArrowRightCircleIcon className="text-primary-foreground w-5 h-5" />
-            </LoginLink>
+            </Link>
           </div>
         )}
       </div>

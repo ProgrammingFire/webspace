@@ -1,7 +1,7 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar } from "@/components/ui/avatar";
 import { db } from "@/lib/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { currentUser } from "@clerk/nextjs";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
@@ -16,12 +16,12 @@ interface SolutionPageParams {
 export default async function SolutionsPage({
   params: { challengeId },
 }: SolutionPageParams) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  if (!user || !user.id || !user.email) redirect("/?errMessage=sign-in");
+  const user = await currentUser();
+  if (!user || !user.id || !user.emailAddresses)
+    redirect("/?errMessage=sign-in");
 
   const dbUser = await db.user.findFirst({
-    where: { id: user.id, email: user.email },
+    where: { id: user.id },
   });
 
   if (!dbUser) redirect("/auth-callback?origin=solve");

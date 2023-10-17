@@ -1,11 +1,10 @@
 import { db } from "@/lib/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(_request: NextRequest) {
-  const { getUser } = getKindeServerSession();
-  const user = getUser();
+  const user = await currentUser();
 
   if (!user || !user.id) {
     return NextResponse.redirect(new URL("/?errMessage=sign-in"));

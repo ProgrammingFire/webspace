@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import TrpcProvider from "@/providers/trpc-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Head from "next/head";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const font = Barlow({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -39,13 +40,15 @@ export const metadata: Metadata = {
 function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={font.className}>
-        <TrpcProvider>
-          <Header />
-          <main className="mt-14">{children}</main>
-          <Toaster />
-        </TrpcProvider>
-      </body>
+      <ClerkProvider>
+        <body className={font.className}>
+          <TrpcProvider>
+            <Header />
+            <main className="mt-14">{children}</main>
+            <Toaster />
+          </TrpcProvider>
+        </body>
+      </ClerkProvider>
     </html>
   );
 }

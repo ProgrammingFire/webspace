@@ -1,4 +1,3 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 import { db } from "@/lib/database";
 import { z } from "zod";
@@ -8,6 +7,7 @@ import {
   teamEnum,
   userProfileSchema,
 } from "@/lib/schemas";
+import { currentUser } from "@clerk/nextjs";
 
 export const appRouter = router({
   authCallback: publicProcedure
@@ -22,10 +22,9 @@ export const appRouter = router({
           code: "BAD_REQUEST",
         };
 
-      const { getUser } = getKindeServerSession();
-      const user = getUser();
+      const user = await currentUser();
 
-      if (!user.email || !user.id)
+      if (!user || !user.emailAddresses || !user.id)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const dbUser = await db.user.findFirst({
@@ -46,8 +45,8 @@ export const appRouter = router({
         await db.user.create({
           data: {
             id: user.id,
-            email: user.email,
-            profilePic: user.picture,
+            email: user.emailAddresses[0].emailAddress,
+            profilePic: user.imageUrl,
             ...input,
           },
         });

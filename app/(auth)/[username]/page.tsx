@@ -16,8 +16,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { db } from "@/lib/database";
-import { notFound } from "next/navigation";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { notFound, redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import {
@@ -29,6 +28,7 @@ import {
 import UserProfileForm from "@/components/UserProfileForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FollowButton from "@/components/FollowButton";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs";
 
 interface ProfilePageProps {
   params: {
@@ -39,8 +39,7 @@ interface ProfilePageProps {
 export default async function ProfilePage({
   params: { username },
 }: ProfilePageProps) {
-  const { getUser } = getKindeServerSession();
-  const user = getUser();
+  const user = await currentUser();
 
   const dbUser = await db.user.findFirst({
     where: { username: username },
@@ -97,7 +96,7 @@ export default async function ProfilePage({
           </div>
         </div>
         <div className="flex">
-          {user.id === dbUser.id ? (
+          {user && user.id === dbUser.id ? (
             <Link
               href="/edit-profile"
               className={buttonVariants({ variant: "outline" })}

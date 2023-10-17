@@ -1,12 +1,11 @@
 import UserProfileForm from "@/components/UserProfileForm";
 import { db } from "@/lib/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function EditProfilePage() {
-  const { getUser } = getKindeServerSession();
-  const user = getUser();
+  const user = await currentUser();
 
   if (!user || !user.id) redirect("/?errMessage=sign-in");
 
