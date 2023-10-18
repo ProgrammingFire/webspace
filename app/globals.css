@@ -65,7 +65,3 @@
 .primary-border {
   @apply bg-clip-border from-blue-300 to-purple-300;
 }
-
-.cl-dividerLine {
-  background-color: #413e58;
-}
