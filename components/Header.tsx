@@ -61,7 +61,12 @@ async function Header() {
         <Timer endDate={endDate} />
         {user ? (
           !dbUser ? (
-            <Button variant="default">Setup your account</Button>
+            <Link
+              href="/auth-callback?origin=solve"
+              className={buttonVariants({ variant: "default" })}
+            >
+              Setup your account
+            </Link>
           ) : (
             <div className="flex items-center space-x-2 h-full">
               <DropdownMenu>
