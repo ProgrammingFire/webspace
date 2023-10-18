@@ -65,3 +65,12 @@
 .primary-border {
   @apply bg-clip-border from-blue-300 to-purple-300;
 }
+
+div.star-container > svg {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+div.star-container {
+  padding: 0px !important;
+}

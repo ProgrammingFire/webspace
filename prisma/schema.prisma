@@ -38,6 +38,7 @@ model Solution {
   framework     Framework
   sourceCodeUrl String     @unique
   liveAppUrl    String     @unique
+  rating        Decimal?
   challengeId   String?
   challenge     Challenge? @relation(fields: [challengeId], references: [id])
   user          User       @relation(fields: [solvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)

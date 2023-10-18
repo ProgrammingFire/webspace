@@ -26,13 +26,20 @@ import {
 import { trpc } from "@/app/_trpc/client";
 import { submitSolutionFormSchema as formSchema } from "@/lib/schemas";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface SubmitSolutionFormProps {
   challengeId: string;
 }
 
 function SubmitSolutionForm({ challengeId }: SubmitSolutionFormProps) {
-  const { mutate: submit, isLoading } = trpc.submitSolution.useMutation();
+  const router = useRouter();
+
+  const { mutate: submit, isLoading } = trpc.submitSolution.useMutation({
+    onSuccess: () => {
+      router.push(`/solutions/${challengeId}`);
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
