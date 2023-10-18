@@ -7,7 +7,13 @@ interface SolutionRatingProps {
 }
 
 function SolutionRating({ initialValue }: SolutionRatingProps) {
-  return <StarRatings rating={initialValue} starRatedColor="#6D28D9" />;
+  return (
+    <StarRatings
+      rating={initialValue}
+      starRatedColor="#8e79e0"
+      starEmptyColor="#37414f"
+    />
+  );
 }
 
 export default SolutionRating;

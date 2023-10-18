@@ -18,6 +18,7 @@ import {
 import SubmitSolutionForm from "@/components/SubmitSolutionForm";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 async function Page() {
   const user = await currentUser();
@@ -67,7 +68,7 @@ async function Page() {
           href={`/solutions/${challenge.id}`}
           className={buttonVariants({ variant: "default" })}
         >
-          Look at the solutions
+          Look at the solutions <ArrowRight className="w-4 h-4 ml-3" />
         </Link>
       ) : (
         <Dialog>

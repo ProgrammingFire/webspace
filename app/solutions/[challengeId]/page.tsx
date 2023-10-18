@@ -49,7 +49,7 @@ export default async function SolutionsPage({
 
   const userSolved = userSolution.length !== 0;
 
-  if (!userSolved || !challengeEnded) redirect("/solve");
+  if (!userSolved && !challengeEnded) redirect("/solve");
 
   return (
     <div className="px-10 py-10">
@@ -60,7 +60,7 @@ export default async function SolutionsPage({
               src={challenge.images[0]}
               alt={challenge.name}
               fill
-              className="rounded-xl border-4 border-purple-500 object-cover"
+              className="rounded-xl border-4 border-indigo-500 object-cover"
             />
           </AspectRatio>
         </div>
