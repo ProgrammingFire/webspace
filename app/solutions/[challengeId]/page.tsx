@@ -3,7 +3,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { db } from "@/lib/database";
-import { cn } from "@/lib/utils";
+import { cn, getEndDate, isEnded } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
@@ -37,6 +37,9 @@ export default async function SolutionsPage({
 
   if (!challenge) notFound();
 
+  const challengeEndDate = getEndDate(challenge.updatedAt);
+  const [_, challengeEnded] = isEnded(challengeEndDate);
+
   const solutions = await db.solution.findMany({
     where: { challengeId: challenge.id },
     include: { user: {} },
@@ -46,7 +49,7 @@ export default async function SolutionsPage({
 
   const userSolved = userSolution.length !== 0;
 
-  if (!userSolved) redirect("/solve");
+  if (!userSolved || !challengeEnded) redirect("/solve");
 
   return (
     <div className="px-10 py-10">
