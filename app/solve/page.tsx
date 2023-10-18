@@ -62,7 +62,7 @@ async function Page() {
       <p className="text-slate-300 text-lg max-w-lg text-center">
         {challenge.description}
       </p>
-      {userSolved ? (
+      {userSolved || ended ? (
         <Link
           href={`/solutions/${challenge.id}`}
           className={buttonVariants({ variant: "default" })}
@@ -72,7 +72,7 @@ async function Page() {
       ) : (
         <Dialog>
           <DialogTrigger asChild>
-            <Button disabled={ended} variant="outline" className="font-medium">
+            <Button variant="outline" className="font-medium">
               Submit solution
             </Button>
           </DialogTrigger>
