@@ -65,7 +65,10 @@ export default async function SolutionsPage({
       </div>
       <div className="mt-10">
         {solutions.map((solution) => (
-          <div className="flex justify-between border border-border">
+          <div
+            key={solution.id}
+            className="flex justify-between border border-border"
+          >
             <div className="flex">
               {solution.user.profilePic ? (
                 <Image
