@@ -80,7 +80,8 @@ async function Page() {
             <DialogHeader>
               <DialogTitle>Submit Solution</DialogTitle>
               <DialogDescription>
-                Submit an amazing solution for the challenge "{challenge.name}".
+                Submit an amazing solution for the challenge &quot;
+                {challenge.name}&quot;.
               </DialogDescription>
             </DialogHeader>
             <SubmitSolutionForm challengeId={challenge.id} />

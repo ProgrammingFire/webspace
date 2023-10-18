@@ -58,7 +58,7 @@ export default async function SolutionsPage({
         </div>
         <div className="flex flex-col items-center space-y-3 w-full mt-5">
           <h1 className="font-semibold mx-auto text-center text-2xl">
-            Solutions for "{challenge.name}"
+            Solutions for &quot;{challenge.name}&quot;
           </h1>
           <p className="text-slate-400">{challenge.description}</p>
         </div>
