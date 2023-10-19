@@ -223,7 +223,7 @@ export default function UserProfileForm({
                     return stack.filter((val) => val !== tech);
                   });
                 }}
-                className="cursor-pointer bg-secondary-bg py-2 px-5 rounded-md shadow-md text-center"
+                className="cursor-pointer bg-secondary-bg py-2 px-5 rounded-md shadow-md text-center text-sm"
               >
                 {tech}
               </div>

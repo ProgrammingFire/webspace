@@ -52,6 +52,8 @@ model User {
   username   String     @unique
   name       String
   team       Team
+  rankPoints Int        @default(0)
+  rank       Rank       @default(Bronze)
   profilePic String?
   bio        String?    @default("Hey there, I have entered the space!")
   techStack  String[]   @default([])
@@ -74,6 +76,17 @@ enum Team {
   Mars
   Jupiter
   Saturn
+
+  @@schema("auth")
+}
+
+enum Rank {
+  Bronze
+  Silver
+  Gold
+  Platinum
+  Diamond
+  Legendary
 
   @@schema("auth")
 }

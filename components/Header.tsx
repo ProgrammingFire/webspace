@@ -92,7 +92,14 @@ async function Header() {
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuLabel>@{dbUser.username}</DropdownMenuLabel>
+                  <DropdownMenuLabel className="">
+                    <span>
+                      {dbUser.name} - @{dbUser.username}
+                    </span>
+                    <div className="border border-border mt-1 rounded-md text-center bg-secondary-bg px-4 py-2">
+                      {dbUser.rank} - {dbUser.rankPoints}
+                    </div>
+                  </DropdownMenuLabel>
                   <Link href="/profile">
                     <DropdownMenuItem className="flex items-center cursor-pointer px-4">
                       <UserIcon className="w-4 h-4 mr-2" /> My Profile

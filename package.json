@@ -35,11 +35,13 @@
     "next": "13.5.4",
     "next-themes": "^0.2.1",
     "react": "^18",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18",
     "react-hook-form": "^7.47.0",
     "react-simple-image-slider": "^2.4.1",
     "react-simple-star-rating": "^5.1.7",
     "react-star-ratings": "^2.3.0",
+    "react-use": "^17.4.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"

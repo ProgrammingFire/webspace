@@ -8,6 +8,7 @@ import {
   userProfileSchema,
 } from "@/lib/schemas";
 import { currentUser } from "@clerk/nextjs";
+import { rankMap } from "@/lib/utils";
 
 export const appRouter = router({
   authCallback: publicProcedure
@@ -155,10 +156,18 @@ export const appRouter = router({
         where: { id: input.challengeId },
       });
 
+      const dbUser = await db.user.findFirst({ where: { id: userId } });
+
       if (!challenge)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "The Challenge requested is not found!",
+        });
+
+      if (!dbUser)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "We couldn't find your account in the database!",
         });
 
       await db.solution.create({
@@ -168,6 +177,14 @@ export const appRouter = router({
           framework: input.framework,
           solvedBy: userId,
           challengeId: input.challengeId,
+        },
+      });
+
+      await db.user.update({
+        where: { id: userId },
+        data: {
+          rankPoints: dbUser.rankPoints + 100,
+          rank: rankMap(dbUser.rankPoints + 100),
         },
       });
     }),
