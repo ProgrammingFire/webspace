@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
   schemas  = ["auth", "public"]
 }
@@ -51,7 +51,7 @@ model User {
   email      String     @unique
   username   String     @unique
   name       String
-  team       Team
+  team       TeamEnum
   rankPoints Int        @default(0)
   rank       Rank       @default(Bronze)
   profilePic String?
@@ -71,7 +71,7 @@ model User {
   @@schema("auth")
 }
 
-enum Team {
+enum TeamEnum {
   Earth
   Mars
   Jupiter

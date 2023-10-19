@@ -84,6 +84,13 @@ export default async function ProfilePage({
               >
                 Team {dbUser.team}
               </span>
+              <span
+                className={cn(
+                  "ml-3  py-2 px-4 text-base rounded-md text-white bg-secondary-bg font-medium border border-border"
+                )}
+              >
+                {dbUser.rank} - {dbUser.rankPoints} points
+              </span>
             </h1>
             <h3 className="text-base font-medium text-slate-200/60">
               @{dbUser.username}
