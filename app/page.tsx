@@ -11,6 +11,9 @@ import { trpc } from "./_trpc/client";
 import ChallengeView from "@/components/ChallengeView";
 import { Challenge } from "@prisma/client";
 import { useState } from "react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Skeleton } from "@/components/ui/skeleton";
+import Loading from "@/components/Loading";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -62,7 +65,10 @@ export default function Home() {
           Today&apos;s Challenge
         </h3>
         {isLoading ? (
-          <div>Loading...</div>
+          <Loading
+            title="Loading..."
+            description="Getting today's challenge for ya!"
+          />
         ) : (
           data && (
             <ChallengeView

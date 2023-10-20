@@ -6,6 +6,7 @@ import TrpcProvider from "@/providers/trpc-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Head from "next/head";
 import { ClerkProvider } from "@clerk/nextjs";
+import Footer from "@/components/Footer";
 
 const font = Barlow({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -44,7 +45,8 @@ function RootLayout({ children }: { children: React.ReactNode }) {
         <body className={font.className}>
           <TrpcProvider>
             <Header />
-            <main className="mt-14">{children}</main>
+            <main className="mt-14 min-h-screen">{children}</main>
+            <Footer />
             <Toaster />
           </TrpcProvider>
         </body>
