@@ -47,10 +47,12 @@ function ChallengeView({
           />
         </AspectRatio>
       </div>
-      <h1 className="text-2xl font-semibold">{challenge.name}</h1>
-      <p className="text-slate-300 text-lg max-w-lg text-center">
-        {challenge.description}
-      </p>
+      <div className="flex flex-col items-center space-y-1 mb-3">
+        <h1 className="text-2xl font-semibold">{challenge.name}</h1>
+        <p className="text-slate-300 text-base max-w-lg text-center">
+          {challenge.description}
+        </p>
+      </div>
       {!landingPage &&
         (userSolved || ended ? (
           <Link
