@@ -53,13 +53,13 @@ export default function Home() {
         <Link href="/sign-in" className={cn(buttonVariants({}))}>
           Become an Astronaut <ArrowRightCircle className="w-5 h-5 ml-3" />{" "}
           <span className="bg-secondary-bg py-1 px-4 text-white rounded-md ml-3">
-            It's Free!
+            It&apos;s Free!
           </span>
         </Link>
       </div>
       <div className="flex flex-col items-center space-y-5 mt-12">
         <h3 className="text-3xl font-bold bg-gradient-to-l primary-foreground">
-          Today's Challenge
+          Today&apos;s Challenge
         </h3>
         {isLoading ? (
           <div>Loading...</div>
