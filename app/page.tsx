@@ -31,7 +31,7 @@ export default function Home() {
     <main className="py-12 flex flex-col items-center">
       <div className="flex flex-col items-center space-y-5">
         <div className="flex flex-col items-center space-y-3">
-          <h1 className="font-bold text-3xl bg-gradient-to-l primary-foreground">
+          <h1 className="font-bold text-4xl bg-gradient-to-l primary-foreground">
             Enter the{" "}
             <span className="bg-secondary-bg rounded-md shadow-md ml-2 py-2 px-4">
               <span className="bg-gradient-to-l primary-foreground font-bold">
