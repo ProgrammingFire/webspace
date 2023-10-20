@@ -19,6 +19,7 @@ import SubmitSolutionForm from "@/components/SubmitSolutionForm";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import ChallengeView from "@/components/ChallengeView";
 
 async function Page() {
   const user = await currentUser();
@@ -48,48 +49,12 @@ async function Page() {
   const [_, ended] = isEnded(endDate);
 
   return (
-    <div className="flex flex-col space-y-3 items-center py-12 mx-auto">
-      <div className="w-2/4">
-        <AspectRatio ratio={16 / 9}>
-          <Image
-            src={challenge.images[0]}
-            fill
-            alt={challenge.name}
-            className="rounded-md object-cover border-4 border-indigo-600"
-          />
-        </AspectRatio>
-      </div>
-      <h1 className="text-2xl font-semibold">{challenge.name}</h1>
-      <p className="text-slate-300 text-lg max-w-lg text-center">
-        {challenge.description}
-      </p>
-      {userSolved || ended ? (
-        <Link
-          href={`/solutions/${challenge.id}`}
-          className={buttonVariants({ variant: "default" })}
-        >
-          Look at the solutions <ArrowRight className="w-4 h-4 ml-3" />
-        </Link>
-      ) : (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="font-medium">
-              Submit solution
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Submit Solution</DialogTitle>
-              <DialogDescription>
-                Submit an amazing solution for the challenge &quot;
-                {challenge.name}&quot;.
-              </DialogDescription>
-            </DialogHeader>
-            <SubmitSolutionForm challengeId={challenge.id} />
-          </DialogContent>
-        </Dialog>
-      )}
-    </div>
+    <ChallengeView
+      challenge={challenge}
+      userSolved={userSolved}
+      ended={ended}
+      landingPage={false}
+    />
   );
 }
 

@@ -188,6 +188,16 @@ export const appRouter = router({
         },
       });
     }),
+  getLandingPageData: publicProcedure.query(async () => {
+    const challenge = await db.challenge.findFirst({
+      where: { current: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!challenge) throw new TRPCError({ code: "NOT_FOUND" });
+
+    return { challenge };
+  }),
 });
 
 export type AppRouter = typeof appRouter;
